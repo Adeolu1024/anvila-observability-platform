@@ -1,0 +1,37 @@
+server:
+  http_listen_port: 3200
+
+distributor:
+  receivers:
+    otlp:
+      protocols:
+        grpc:
+          endpoint: 127.0.0.1:4319
+        http:
+          endpoint: 127.0.0.1:4320
+
+ingester:
+  trace_idle_period: 10s
+  max_block_duration: 5m
+
+compactor:
+  compaction:
+    block_retention: 168h
+
+storage:
+  trace:
+    backend: local
+    local:
+      path: /var/lib/tempo/traces
+    wal:
+      path: /var/lib/tempo/wal
+
+metrics_generator:
+  registry:
+    external_labels:
+      source: tempo
+      service: anvila-api
+  storage:
+    path: /var/lib/tempo/generator/wal
+    remote_write:
+      - url: http://localhost:9090/api/v1/write

@@ -1,0 +1,148 @@
+groups:
+  - name: infrastructure
+    rules:
+      - alert: HostDown
+        expr: probe_success == 0
+        for: 2m
+        labels:
+          severity: critical
+          service: anvila-api
+          runbook: docs/runbooks/host-down.md
+        annotations:
+          summary: "Blackbox probe failed for {{ $labels.instance }}"
+          dashboard: "http://localhost:3000/d/blackbox/anvila-blackbox"
+          value: "{{ $value }}"
+
+      - alert: HighCPUWarning
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+          runbook: docs/runbooks/high-cpu.md
+        annotations:
+          summary: "CPU usage is above 80% on {{ $labels.instance }}"
+          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          value: "{{ $value }}"
+
+      - alert: HighCPUCritical
+        expr: 100 - (avg by(instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 90
+        for: 10m
+        labels:
+          severity: critical
+          service: infrastructure
+          runbook: docs/runbooks/high-cpu.md
+        annotations:
+          summary: "CPU usage is above 90% on {{ $labels.instance }}"
+          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          value: "{{ $value }}"
+
+      - alert: HighMemoryWarning
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 80
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+          runbook: docs/runbooks/high-memory.md
+        annotations:
+          summary: "Memory usage is above 80% on {{ $labels.instance }}"
+          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          value: "{{ $value }}"
+
+      - alert: HighMemoryCritical
+        expr: (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 10m
+        labels:
+          severity: critical
+          service: infrastructure
+          runbook: docs/runbooks/high-memory.md
+        annotations:
+          summary: "Memory usage is above 90% on {{ $labels.instance }}"
+          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          value: "{{ $value }}"
+
+      - alert: DiskUsageWarning
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 75
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+          runbook: docs/runbooks/disk-usage.md
+        annotations:
+          summary: "Disk usage is above 75% on {{ $labels.instance }}"
+          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          value: "{{ $value }}"
+
+      - alert: DiskUsageCritical
+        expr: (1 - (node_filesystem_avail_bytes{fstype!~"tmpfs|overlay"} / node_filesystem_size_bytes{fstype!~"tmpfs|overlay"})) * 100 > 90
+        for: 10m
+        labels:
+          severity: critical
+          service: infrastructure
+          runbook: docs/runbooks/disk-usage.md
+        annotations:
+          summary: "Disk usage is above 90% on {{ $labels.instance }}"
+          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          value: "{{ $value }}"
+
+  - name: slo-burn-rate
+    rules:
+      - record: anvila:availability_error_ratio:5m
+        expr: 1 - avg_over_time(probe_success{job="blackbox-http"}[5m])
+
+      - record: anvila:availability_error_ratio:1h
+        expr: 1 - avg_over_time(probe_success{job="blackbox-http"}[1h])
+
+      - record: anvila:availability_error_ratio:6h
+        expr: 1 - avg_over_time(probe_success{job="blackbox-http"}[6h])
+
+      - alert: SLOFastBurn
+        expr: anvila:availability_error_ratio:1h > (0.005 * 14.4)
+        for: 2m
+        labels:
+          severity: critical
+          service: anvila-api
+          runbook: docs/runbooks/slo-burn-rate.md
+        annotations:
+          summary: "Fast SLO burn detected for Anvila API"
+          dashboard: "http://localhost:3000/d/slo/anvila-slo-error-budget"
+          value: "{{ $value }}"
+
+      - alert: SLOSlowBurn
+        expr: anvila:availability_error_ratio:6h > (0.005 * 5)
+        for: 15m
+        labels:
+          severity: warning
+          service: anvila-api
+          runbook: docs/runbooks/slo-burn-rate.md
+        annotations:
+          summary: "Slow SLO burn detected for Anvila API"
+          dashboard: "http://localhost:3000/d/slo/anvila-slo-error-budget"
+          value: "{{ $value }}"
+
+  - name: dora
+    rules:
+      - alert: ChangeFailureRateHigh
+        expr: anvila_deployment_failures_total / clamp_min(anvila_deployments_total, 1) > 0.15
+        for: 5m
+        labels:
+          severity: warning
+          service: anvila-api
+          runbook: docs/runbooks/change-failure-rate.md
+        annotations:
+          summary: "Change failure rate is above 15%"
+          dashboard: "http://localhost:3000/d/dora/anvila-dora"
+          value: "{{ $value }}"
+
+      - alert: MTTRExceeded
+        expr: anvila_incident_mttr_minutes > 60
+        for: 5m
+        labels:
+          severity: warning
+          service: anvila-api
+          runbook: docs/runbooks/mttr-exceeded.md
+        annotations:
+          summary: "MTTR exceeded the 60 minute target"
+          dashboard: "http://localhost:3000/d/dora/anvila-dora"
+          value: "{{ $value }}"
+

@@ -1,0 +1,36 @@
+{
+  "uid": "dora",
+  "title": "Anvila DORA Metrics",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "tags": ["anvila", "dora"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "stat",
+      "title": "Deployment Frequency",
+      "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "increase(anvila_deployments_total[7d])" }]
+    },
+    {
+      "type": "stat",
+      "title": "Lead Time For Changes",
+      "gridPos": { "x": 6, "y": 0, "w": 6, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "avg(anvila_lead_time_minutes)" }]
+    },
+    {
+      "type": "gauge",
+      "title": "Change Failure Rate",
+      "gridPos": { "x": 12, "y": 0, "w": 6, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila_deployment_failures_total / clamp_min(anvila_deployments_total, 1)" }]
+    },
+    {
+      "type": "stat",
+      "title": "MTTR Minutes",
+      "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila_incident_mttr_minutes" }]
+    }
+  ]
+}
+

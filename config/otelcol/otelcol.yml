@@ -1,0 +1,42 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+  journald:
+    directory: /var/log/journal
+    units:
+      - nginx.service
+      - anvila-api.service
+
+processors:
+  batch: {}
+  resource:
+    attributes:
+      - key: service.name
+        value: anvila-api
+        action: upsert
+      - key: team
+        value: anvila
+        action: upsert
+
+exporters:
+  loki:
+    endpoint: http://localhost:3100/loki/api/v1/push
+  otlp/tempo:
+    endpoint: localhost:4319
+    tls:
+      insecure: true
+
+service:
+  pipelines:
+    logs:
+      receivers: [journald, otlp]
+      processors: [resource, batch]
+      exporters: [loki]
+    traces:
+      receivers: [otlp]
+      processors: [resource, batch]
+      exporters: [otlp/tempo]

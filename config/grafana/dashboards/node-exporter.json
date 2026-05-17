@@ -1,0 +1,49 @@
+{
+  "uid": "node",
+  "title": "Anvila Node Exporter",
+  "schemaVersion": 39,
+  "version": 1,
+  "refresh": "30s",
+  "tags": ["anvila", "node-exporter"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "CPU Usage",
+      "gridPos": { "x": 0, "y": 0, "w": 8, "h": 6 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "100 - (avg by(instance) (rate(node_cpu_seconds_total{mode=\"idle\"}[5m])) * 100)" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Memory Usage",
+      "gridPos": { "x": 8, "y": 0, "w": 8, "h": 6 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "(1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Disk Usage",
+      "gridPos": { "x": 16, "y": 0, "w": 8, "h": 6 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "(1 - (node_filesystem_avail_bytes{fstype!~\"tmpfs|overlay\"} / node_filesystem_size_bytes{fstype!~\"tmpfs|overlay\"})) * 100" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Network I/O",
+      "gridPos": { "x": 0, "y": 6, "w": 12, "h": 6 },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "rate(node_network_receive_bytes_total{device!=\"lo\"}[5m])", "legendFormat": "rx" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "rate(node_network_transmit_bytes_total{device!=\"lo\"}[5m])", "legendFormat": "tx" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Load Average",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 6 },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "node_load1", "legendFormat": "1m" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "node_load5", "legendFormat": "5m" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "node_load15", "legendFormat": "15m" }
+      ]
+    }
+  ]
+}
+
