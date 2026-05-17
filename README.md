@@ -74,6 +74,23 @@ Still needed from the team:
 
 For a beginner-friendly explanation of these values, see `docs/beginner-deployment-checklist.md`.
 
+Current deployed monitoring server:
+
+```text
+Grafana: http://34.204.43.206:3000
+Prometheus: http://34.204.43.206:9090
+Alertmanager: http://34.204.43.206:9093
+```
+
+The app currently runs with Nginx and PM2:
+
+```text
+backend-staging: port 8000
+backend-production: port 8001
+```
+
+Staging instrumentation instructions are in `docs/app-instrumentation.md`.
+
 ## Architecture
 
 ```mermaid
