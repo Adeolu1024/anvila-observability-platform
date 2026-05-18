@@ -18,7 +18,7 @@ datasources:
     jsonData:
       derivedFields:
         - datasourceUid: tempo
-          matcherRegex: "trace[_-]?id[=: ]+([A-Fa-f0-9]+)"
+          matcherRegex: "(?:trace[_-]?id|otelTraceID)[\\\"=: ]+([A-Fa-f0-9]{16,32})"
           name: TraceID
           url: "$${__value.raw}"
 
