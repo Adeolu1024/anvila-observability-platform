@@ -109,10 +109,15 @@ resource "aws_instance" "monitoring" {
     destination = "/tmp/install_monitoring.sh"
   }
 
+  provisioner "file" {
+    source      = "../scripts/dora_exporter.py"
+    destination = "/tmp/anvila-dora-exporter.py"
+  }
+
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/install_monitoring.sh",
-      "sudo SLACK_WEBHOOK_URL='${var.slack_webhook_url}' STAGING_URL='${var.staging_url}' PRODUCTION_URL='${var.production_url}' APP_SERVER_IP='${var.app_server_ip}' /tmp/install_monitoring.sh"
+      "sudo SLACK_WEBHOOK_URL='${var.slack_webhook_url}' GRAFANA_PUBLIC_URL='http://${self.public_ip}:3000' STAGING_URL='${var.staging_url}' PRODUCTION_URL='${var.production_url}' APP_SERVER_IP='${var.app_server_ip}' /tmp/install_monitoring.sh"
     ]
   }
 }

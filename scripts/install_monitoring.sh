@@ -12,6 +12,7 @@ GRAFANA_VERSION="11.0.0"
 
 CONFIG_SRC="/tmp/anvila-observability-config"
 INSTALL_ROOT="/opt/anvila-observability"
+GRAFANA_PUBLIC_URL="${GRAFANA_PUBLIC_URL:-http://localhost:3000}"
 
 export DEBIAN_FRONTEND=noninteractive
 
@@ -75,7 +76,7 @@ curl -fsSL "https://dl.grafana.com/oss/release/grafana_${GRAFANA_VERSION}_amd64.
 dpkg -i /tmp/grafana.deb || apt-get -f install -y
 
 envsubst < "${CONFIG_SRC}/prometheus/prometheus.yml" > /etc/prometheus/prometheus.yml
-cp "${CONFIG_SRC}/prometheus/alerts.yml" /etc/prometheus/rules/alerts.yml
+envsubst '${GRAFANA_PUBLIC_URL}' < "${CONFIG_SRC}/prometheus/alerts.yml" > /etc/prometheus/rules/alerts.yml
 envsubst < "${CONFIG_SRC}/alertmanager/alertmanager.yml" > /etc/alertmanager/alertmanager.yml
 cp "${CONFIG_SRC}/alertmanager/slack.tmpl" /etc/alertmanager/slack.tmpl
 cp "${CONFIG_SRC}/prometheus/blackbox.yml" /etc/prometheus/blackbox.yml
@@ -87,8 +88,8 @@ cp "${CONFIG_SRC}/grafana/provisioning/dashboards/dashboards.yml" /etc/grafana/p
 mkdir -p /var/lib/grafana/dashboards
 cp "${CONFIG_SRC}/grafana/dashboards/"*.json /var/lib/grafana/dashboards/
 
-if [ -f "${CONFIG_SRC}/../scripts/dora_exporter.py" ]; then
-  install -m 0755 "${CONFIG_SRC}/../scripts/dora_exporter.py" /usr/local/bin/anvila-dora-exporter
+if [ -f /tmp/anvila-dora-exporter.py ]; then
+  install -m 0755 /tmp/anvila-dora-exporter.py /usr/local/bin/anvila-dora-exporter
 fi
 
 chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus

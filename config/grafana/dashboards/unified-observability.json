@@ -23,8 +23,19 @@
       "type": "logs",
       "title": "Correlated Logs",
       "gridPos": { "x": 16, "y": 0, "w": 8, "h": 6 },
-      "targets": [{ "datasource": { "type": "loki", "uid": "Loki" }, "expr": "{service_name=\"anvila-api\"}" }]
+      "targets": [{ "datasource": { "type": "loki", "uid": "Loki" }, "expr": "{service_name=~\".*anvila-api.*\"}" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Probe Error Rate",
+      "gridPos": { "x": 0, "y": 6, "w": 8, "h": 6 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "1 - probe_success{job=\"blackbox-http\"}" }]
+    },
+    {
+      "type": "traces",
+      "title": "Recent Tempo Traces",
+      "gridPos": { "x": 8, "y": 6, "w": 16, "h": 6 },
+      "targets": [{ "datasource": { "type": "tempo", "uid": "tempo" }, "queryType": "traceql", "expr": "{ resource.service.name = \"anvila-api-staging\" }" }]
     }
   ]
 }
-

@@ -10,7 +10,7 @@ groups:
           runbook: docs/runbooks/host-down.md
         annotations:
           summary: "Blackbox probe failed for {{ $labels.instance }}"
-          dashboard: "http://localhost:3000/d/blackbox/anvila-blackbox"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/blackbox/anvila-blackbox"
           value: "{{ $value }}"
 
       - alert: HighCPUWarning
@@ -22,7 +22,7 @@ groups:
           runbook: docs/runbooks/high-cpu.md
         annotations:
           summary: "CPU usage is above 80% on {{ $labels.instance }}"
-          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/node/anvila-node-exporter"
           value: "{{ $value }}"
 
       - alert: HighCPUCritical
@@ -34,7 +34,7 @@ groups:
           runbook: docs/runbooks/high-cpu.md
         annotations:
           summary: "CPU usage is above 90% on {{ $labels.instance }}"
-          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/node/anvila-node-exporter"
           value: "{{ $value }}"
 
       - alert: HighMemoryWarning
@@ -46,7 +46,7 @@ groups:
           runbook: docs/runbooks/high-memory.md
         annotations:
           summary: "Memory usage is above 80% on {{ $labels.instance }}"
-          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/node/anvila-node-exporter"
           value: "{{ $value }}"
 
       - alert: HighMemoryCritical
@@ -58,7 +58,7 @@ groups:
           runbook: docs/runbooks/high-memory.md
         annotations:
           summary: "Memory usage is above 90% on {{ $labels.instance }}"
-          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/node/anvila-node-exporter"
           value: "{{ $value }}"
 
       - alert: DiskUsageWarning
@@ -70,7 +70,7 @@ groups:
           runbook: docs/runbooks/disk-usage.md
         annotations:
           summary: "Disk usage is above 75% on {{ $labels.instance }}"
-          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/node/anvila-node-exporter"
           value: "{{ $value }}"
 
       - alert: DiskUsageCritical
@@ -82,19 +82,19 @@ groups:
           runbook: docs/runbooks/disk-usage.md
         annotations:
           summary: "Disk usage is above 90% on {{ $labels.instance }}"
-          dashboard: "http://localhost:3000/d/node/anvila-node-exporter"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/node/anvila-node-exporter"
           value: "{{ $value }}"
 
   - name: slo-burn-rate
     rules:
       - record: anvila:availability_error_ratio:5m
-        expr: 1 - avg_over_time(probe_success{job="blackbox-http"}[5m])
+        expr: 1 - avg_over_time(probe_success{job="blackbox-http",instance=~"https://.*"}[5m])
 
       - record: anvila:availability_error_ratio:1h
-        expr: 1 - avg_over_time(probe_success{job="blackbox-http"}[1h])
+        expr: 1 - avg_over_time(probe_success{job="blackbox-http",instance=~"https://.*"}[1h])
 
       - record: anvila:availability_error_ratio:6h
-        expr: 1 - avg_over_time(probe_success{job="blackbox-http"}[6h])
+        expr: 1 - avg_over_time(probe_success{job="blackbox-http",instance=~"https://.*"}[6h])
 
       - alert: SLOFastBurn
         expr: anvila:availability_error_ratio:1h > (0.005 * 14.4)
@@ -105,7 +105,7 @@ groups:
           runbook: docs/runbooks/slo-burn-rate.md
         annotations:
           summary: "Fast SLO burn detected for Anvila API"
-          dashboard: "http://localhost:3000/d/slo/anvila-slo-error-budget"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/slo/anvila-slo-error-budget"
           value: "{{ $value }}"
 
       - alert: SLOSlowBurn
@@ -117,7 +117,7 @@ groups:
           runbook: docs/runbooks/slo-burn-rate.md
         annotations:
           summary: "Slow SLO burn detected for Anvila API"
-          dashboard: "http://localhost:3000/d/slo/anvila-slo-error-budget"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/slo/anvila-slo-error-budget"
           value: "{{ $value }}"
 
   - name: dora
@@ -131,7 +131,7 @@ groups:
           runbook: docs/runbooks/change-failure-rate.md
         annotations:
           summary: "Change failure rate is above 15%"
-          dashboard: "http://localhost:3000/d/dora/anvila-dora"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/dora/anvila-dora"
           value: "{{ $value }}"
 
       - alert: MTTRExceeded
@@ -143,6 +143,5 @@ groups:
           runbook: docs/runbooks/mttr-exceeded.md
         annotations:
           summary: "MTTR exceeded the 60 minute target"
-          dashboard: "http://localhost:3000/d/dora/anvila-dora"
+          dashboard: "${GRAFANA_PUBLIC_URL}/d/dora/anvila-dora"
           value: "{{ $value }}"
-

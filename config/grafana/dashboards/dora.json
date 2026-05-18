@@ -11,7 +11,7 @@
       "type": "stat",
       "title": "Deployment Frequency",
       "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 },
-      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "increase(anvila_deployments_total[7d])" }]
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "sum(anvila_deployment_frequency_7d)" }]
     },
     {
       "type": "stat",
@@ -30,7 +30,40 @@
       "title": "MTTR Minutes",
       "gridPos": { "x": 18, "y": 0, "w": 6, "h": 4 },
       "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila_incident_mttr_minutes" }]
+    },
+    {
+      "type": "stat",
+      "title": "DORA DF Classification",
+      "gridPos": { "x": 0, "y": 4, "w": 6, "h": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            { "type": "value", "options": { "1": { "text": "Low" }, "2": { "text": "Medium" }, "3": { "text": "High" }, "4": { "text": "Elite" } } }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "red", "value": null },
+              { "color": "orange", "value": 2 },
+              { "color": "yellow", "value": 3 },
+              { "color": "green", "value": 4 }
+            ]
+          }
+        }
+      },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "4 * (sum(anvila_deployment_frequency_7d) >= bool 14) + 3 * ((sum(anvila_deployment_frequency_7d) >= bool 1) * (sum(anvila_deployment_frequency_7d) < bool 14)) + 2 * ((sum(anvila_deployment_frequency_7d) > bool 0) * (sum(anvila_deployment_frequency_7d) < bool 1)) + 1 * (sum(anvila_deployment_frequency_7d) == bool 0)" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Deployment Frequency Trend",
+      "gridPos": { "x": 6, "y": 4, "w": 9, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila_deployment_frequency_7d" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "Lead Time Trend",
+      "gridPos": { "x": 15, "y": 4, "w": 9, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila_lead_time_minutes" }]
     }
   ]
 }
-
