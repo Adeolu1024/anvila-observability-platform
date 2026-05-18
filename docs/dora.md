@@ -1,8 +1,8 @@
-# DORA Metrics Plan
+# DORA Metrics Implementation
 
 ## Deployment Frequency
 
-Source: GitHub Actions deployment workflow runs.
+Source: GitHub Actions deployment workflow runs scraped by the local DORA exporter.
 
 Workflows:
 
@@ -26,7 +26,13 @@ Target measurement:
 commit timestamp -> workflow started -> workflow completed -> deployment confirmed
 ```
 
-The final implementation should export these as Prometheus metrics from GitHub Actions or a small GitHub exporter.
+Current implementation:
+
+- `anvila_lead_time_minutes` measures commit timestamp to workflow completion.
+- Pipeline trigger and pipeline completion are represented by the GitHub Actions run timestamps.
+- Deployment confirmation is approximated by successful completion of the deployment workflow.
+
+Future improvement: export each sub-interval as a separate metric once the backend deployment workflow records an explicit production confirmation event.
 
 ## Change Failure Rate
 
@@ -44,6 +50,11 @@ anvila_incident_mttr_minutes
 
 Target: restore service within 60 minutes.
 
+Current implementation:
+
+- `anvila_incident_mttr_minutes` is exported by the DORA exporter as a manual incident metric placeholder.
+- The Game Day incident timeline is documented in `docs/incidents/sample-pir.md`.
+
 ## Toil Identified
 
 1. Manual dashboard creation in Grafana.
@@ -54,4 +65,3 @@ Target: restore service within 60 minutes.
 
 3. Manual monitoring server setup.
    Automation: Terraform creates the monitoring server and starts services through systemd.
-

@@ -24,7 +24,22 @@
       "title": "SSL Expiry Days",
       "gridPos": { "x": 16, "y": 0, "w": 8, "h": 4 },
       "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "(probe_ssl_earliest_cert_expiry - time()) / 86400" }]
+    },
+    {
+      "type": "state-timeline",
+      "title": "Uptime / Downtime Timeline",
+      "gridPos": { "x": 0, "y": 6, "w": 24, "h": 5 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "probe_success{job=\"blackbox-http\"}" }]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Response Time p50/p90/p99 Approximation",
+      "gridPos": { "x": 0, "y": 11, "w": 24, "h": 5 },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "quantile_over_time(0.50, probe_duration_seconds{job=\"blackbox-http\"}[5m])", "legendFormat": "p50 {{ instance }}" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "quantile_over_time(0.90, probe_duration_seconds{job=\"blackbox-http\"}[5m])", "legendFormat": "p90 {{ instance }}" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "quantile_over_time(0.99, probe_duration_seconds{job=\"blackbox-http\"}[5m])", "legendFormat": "p99 {{ instance }}" }
+      ]
     }
   ]
 }
-

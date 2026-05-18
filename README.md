@@ -48,16 +48,13 @@ slack_webhook_url       = "https://hooks.slack.com/services/..."
 
 Still needed from the team:
 
-- AWS key pair name for the monitoring EC2 instance
-- SSH private key path on the machine running Terraform
-- confirmed AWS region
 - production app server IP
 - Slack incoming webhook for `#DevOps-Alerts`
-- whether the Python API exposes `/metrics`
-- whether the API runs as a systemd service, PM2 process, or another process manager
-- actual app log paths or journal service name
+- final GitHub token for the DORA exporter, stored only on the monitoring server
 
 For a beginner-friendly explanation of these values, see `docs/beginner-deployment-checklist.md`.
+
+The GitHub token is deliberately not stored in Terraform or Git. After a fresh deploy, configure `/etc/anvila-dora-exporter.env` using `docs/dora-exporter.md`.
 
 Current deployed monitoring server:
 

@@ -27,7 +27,39 @@
         { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila:availability_error_ratio:1h / 0.005", "legendFormat": "1h burn" },
         { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila:availability_error_ratio:6h / 0.005", "legendFormat": "6h burn" }
       ]
+    },
+    {
+      "type": "stat",
+      "title": "SLO Target",
+      "gridPos": { "x": 0, "y": 6, "w": 6, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "vector(0.995)" }]
+    },
+    {
+      "type": "stat",
+      "title": "Error Budget Time Remaining",
+      "gridPos": { "x": 6, "y": 6, "w": 6, "h": 4 },
+      "targets": [{ "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "(1 - ((1 - avg_over_time(probe_success{job=\"blackbox-http\"}[30d])) / 0.005)) * 3.6" }],
+      "fieldConfig": { "defaults": { "unit": "h" } }
+    },
+    {
+      "type": "timeseries",
+      "title": "SLO Compliance History",
+      "gridPos": { "x": 12, "y": 6, "w": 12, "h": 4 },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "avg_over_time(probe_success{job=\"blackbox-http\"}[7d])", "legendFormat": "7d" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "avg_over_time(probe_success{job=\"blackbox-http\"}[30d])", "legendFormat": "30d" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "vector(0.995)", "legendFormat": "SLO target" }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Burn Rate Thresholds",
+      "gridPos": { "x": 0, "y": 10, "w": 24, "h": 4 },
+      "targets": [
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "anvila:availability_error_ratio:1h / 0.005", "legendFormat": "actual 1h burn" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "vector(14.4)", "legendFormat": "fast threshold" },
+        { "datasource": { "type": "prometheus", "uid": "Prometheus" }, "expr": "vector(5)", "legendFormat": "slow threshold" }
+      ]
     }
   ]
 }
-

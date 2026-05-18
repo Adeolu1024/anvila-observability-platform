@@ -38,6 +38,15 @@ The live server stores it in:
 /etc/anvila-dora-exporter.env
 ```
 
+Create it on a fresh monitoring server with:
+
+```bash
+sudo bash -c 'read -s -p "GitHub token: " TOKEN; echo; printf "GITHUB_TOKEN=%s\nGITHUB_REPOSITORY=hngprojects/anvila-backend\nPORT=9999\n" "$TOKEN" > /etc/anvila-dora-exporter.env'
+sudo chmod 600 /etc/anvila-dora-exporter.env
+sudo systemctl enable --now anvila-dora-exporter
+sudo systemctl restart prometheus
+```
+
 ## Systemd Service
 
 The exporter runs as:
@@ -51,4 +60,3 @@ Prometheus scrapes:
 ```text
 localhost:9999
 ```
-
