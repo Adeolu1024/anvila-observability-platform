@@ -225,4 +225,4 @@ if [ -f /usr/local/bin/anvila-dora-exporter ] && [ -f /etc/anvila-dora-exporter.
 fi
 systemctl enable --now node-exporter blackbox-exporter loki tempo otelcol-contrib prometheus alertmanager grafana-server
 
-echo "Monitoring stack installed."
+echo "Monitoring stack installed and running"
