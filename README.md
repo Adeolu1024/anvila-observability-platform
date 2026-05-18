@@ -12,21 +12,6 @@ Production-grade observability stack for the Anvila API using LGTM:
 
 The monitoring stack is designed to run on a dedicated AWS EC2 monitoring server using systemd services. Docker is intentionally not used on the server.
 
-## Recommended Repository Name
-
-Use:
-
-```text
-anvila-observability-platform
-```
-
-Other acceptable names:
-
-```text
-anvila-lgtm-observability
-anvila-sre-platform
-anvila-monitoring-stack
-```
 
 ## Known Targets
 
