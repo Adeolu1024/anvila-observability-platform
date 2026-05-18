@@ -17,7 +17,7 @@ processors:
     attributes:
       - key: service.name
         value: anvila-api
-        action: upsert
+        action: insert
       - key: team
         value: anvila
         action: upsert
