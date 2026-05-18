@@ -48,4 +48,4 @@ Controlled artificial latency added during Game Day testing.
 | --- | --- | --- |
 | Add endpoint-level Prometheus metrics | Anvila DevOps | 2026-05-25 |
 | Add GitHub deployment annotations to Grafana | Anvila DevOps | 2026-05-25 |
-| Confirm production app server IP target | Anvila DevOps | 2026-05-20 |
+| Confirm production app server IP target | Anvila DevOps | Done on 2026-05-18 |

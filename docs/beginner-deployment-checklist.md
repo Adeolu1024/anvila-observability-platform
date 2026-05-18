@@ -76,23 +76,25 @@ Until the mentor sends it, keep this placeholder:
 slack_webhook_url = "REPLACE_WITH_SLACK_WEBHOOK"
 ```
 
-## 6. Production App Server IP
+## 6. Application Server IP
 
-We already have the staging app server IP:
+We confirmed that staging and production currently run on the same app server:
 
 ```text
-13.60.76.205
+Public IP: 13.60.76.205
+Private IP: 172.31.19.1
+Staging port: 8000
+Production port: 8001
 ```
 
-The production app server IP means the EC2 server that runs:
+This server runs:
 
 ```text
+https://api.staging.anvila.hng14.com
 https://api.anvila.hng14.com
 ```
 
-If we do not have it yet, we can still monitor production from the outside using Blackbox Exporter because we have the production URL.
-
-Production server CPU, memory, and logs require the actual production server IP later.
+Prometheus scrapes host-level metrics from this server through Node Exporter on port `9100`. Blackbox Exporter probes both public URLs from the monitoring server.
 
 ## 7. App Server Security Group
 

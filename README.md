@@ -18,9 +18,9 @@ The monitoring stack is designed to run on a dedicated AWS EC2 monitoring server
 | Environment | URL | App server | Port |
 | --- | --- | --- | --- |
 | Staging | `https://api.staging.anvila.hng14.com` | `13.60.76.205` | `8000` |
-| Production | `https://api.anvila.hng14.com` | TBD | `8001` |
+| Production | `https://api.anvila.hng14.com` | `13.60.76.205` | `8001` |
 
-The current first-class monitoring target is staging because the app server IP is known.
+Staging and production currently run on the same known application server. Prometheus scrapes host-level metrics from this server through Node Exporter, while Blackbox Exporter probes both public API URLs.
 
 ## One-Command Deployment
 
@@ -48,7 +48,6 @@ slack_webhook_url       = "https://hooks.slack.com/services/..."
 
 Still needed from the team:
 
-- production app server IP
 - Slack incoming webhook for `#DevOps-Alerts`
 - final GitHub token for the DORA exporter, stored only on the monitoring server
 
@@ -69,6 +68,8 @@ The app currently runs with Nginx and PM2:
 ```text
 backend-staging: port 8000
 backend-production: port 8001
+app server public IP: 13.60.76.205
+app server private IP: 172.31.19.1
 ```
 
 Staging instrumentation instructions are in `docs/app-instrumentation.md`.

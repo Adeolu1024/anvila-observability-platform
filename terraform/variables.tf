@@ -32,7 +32,7 @@ variable "monitoring_allowed_cidr" {
 }
 
 variable "app_server_ip" {
-  description = "Staging application server IP."
+  description = "Application server public IP. Staging runs on port 8000 and production runs on port 8001 on this host."
   type        = string
   default     = "13.60.76.205"
 }
