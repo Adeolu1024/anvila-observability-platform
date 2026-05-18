@@ -87,6 +87,10 @@ cp "${CONFIG_SRC}/grafana/provisioning/dashboards/dashboards.yml" /etc/grafana/p
 mkdir -p /var/lib/grafana/dashboards
 cp "${CONFIG_SRC}/grafana/dashboards/"*.json /var/lib/grafana/dashboards/
 
+if [ -f "${CONFIG_SRC}/../scripts/dora_exporter.py" ]; then
+  install -m 0755 "${CONFIG_SRC}/../scripts/dora_exporter.py" /usr/local/bin/anvila-dora-exporter
+fi
+
 chown -R prometheus:prometheus /etc/prometheus /var/lib/prometheus
 chown -R alertmanager:alertmanager /etc/alertmanager /var/lib/alertmanager
 chown -R loki:loki /etc/loki /var/lib/loki
@@ -197,7 +201,27 @@ RestartSec=5
 WantedBy=multi-user.target
 SERVICE
 
+cat >/etc/systemd/system/anvila-dora-exporter.service <<'SERVICE'
+[Unit]
+Description=Anvila DORA GitHub Actions Exporter
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=simple
+EnvironmentFile=/etc/anvila-dora-exporter.env
+ExecStart=/usr/bin/python3 /usr/local/bin/anvila-dora-exporter
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
+SERVICE
+
 systemctl daemon-reload
+if [ -f /usr/local/bin/anvila-dora-exporter ] && [ -f /etc/anvila-dora-exporter.env ]; then
+  systemctl enable --now anvila-dora-exporter
+fi
 systemctl enable --now node-exporter blackbox-exporter loki tempo otelcol-contrib prometheus alertmanager grafana-server
 
 echo "Monitoring stack installed."

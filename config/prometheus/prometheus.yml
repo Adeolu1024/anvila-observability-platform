@@ -50,10 +50,10 @@ scrape_configs:
       - target_label: __address__
         replacement: localhost:9115
 
-  - job_name: github-actions-placeholder
+  - job_name: github-actions-dora
     scrape_interval: 60s
     static_configs:
       - targets: ["localhost:9999"]
         labels:
-          note: replace-with-github-actions-exporter
-
+          service: anvila-api
+          source: github-actions
